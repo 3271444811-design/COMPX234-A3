@@ -41,7 +41,34 @@ def main():
             # X is "R" for READ and "G" for GET.
             # Hint: for READ/GET, size = 6 + len(key). For PUT, size = 7 + len(key) + len(value).
             # Reject lines with invalid format or key+" "+value > 970 chars.
-
+            if cmd == "PUT":
+                if len(parts) != 3:
+                    print(f"Error: Invalid PUT line: {line}")
+                    continue
+                key = parts[1]
+                value = parts[2]
+                if len(key + " " + value) > 970:
+                    print(f"Error: Line too long, ignoring: {line}")
+                    continue
+                msg_size = 7 + len(key) + len(value)
+                message = f"{msg_size:03d} P {key} {value}"
+            elif cmd == "READ":
+                if len(parts) != 2:
+                    print(f"Error: Invalid READ line: {line}")
+                    continue
+                key = parts[1]
+                msg_size = 6 + len(key)
+                message = f"{msg_size:03d} R {key}"
+            elif cmd == "GET":
+                if len(parts) != 2:
+                    print(f"Error: Invalid GET line: {line}")
+                    continue
+                key = parts[1]
+                msg_size = 6 + len(key)
+                message = f"{msg_size:03d} G {key}"
+            else:
+                print(f"Error: Unknown command: {cmd}")
+                continue
 
             # TASK 3: Send the message to the server, then receive the response.
             # - Send:    sock.sendall(message.encode())
